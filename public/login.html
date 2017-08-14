@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>ToDo App</title>
+
+
+
+    <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+<body>
+<form name="login-form" class="login-form" action="" method="post">
+
+    <div class="header">
+        <h1>Welcome</h1>
+        <span>Please, fill this login-form</span>
+    </div>
+
+    <div class="content">
+        <input id= "username" name="username" type="text" class="input username" placeholder="Username" />
+        <div class="user-icon"></div>
+        <input id=password" name="password" type="password" class="input password" placeholder="Password" />
+        <div class="pass-icon"></div>
+    </div>
+
+    <div class="footer">
+        <a href="http://localhost:8080/register">Register</a>
+        <button id = "loginBtn" class="button">Login</button>
+
+    </div>
+
+</form>
+
+
+</body>
+
+<script>
+    $("#loginBtn").click(function () {
+        var password = $("#password").val();
+        var username = $("#username").val();
+        if(password && username) {
+            $.post("/login/" + username + "/" + password, function (data) {
+                var status = data;
+
+                if (status === '500') {
+                    alert("invalid username or password")
+                } else {
+
+                    window.parent.location = "http://localhost:8080/item/"
+                }
+
+            });
+        }else {
+            alert('please insert valid user name and password')
+        }
+    })
+</script>
+</html>
