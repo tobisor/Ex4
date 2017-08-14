@@ -2,7 +2,7 @@
 <html >
 <head>
     <meta charset="UTF-8">
-    <title>ToDo App</title>
+    <title>Register ToDo App</title>
 
 
 
@@ -20,18 +20,37 @@
     </div>
 
     <div class="content">
-        <input name="username" type="text" class="input username" placeholder="Username" />
+        <input id= "username" name="username" type="text" class="input username" placeholder="Username" />
         <div class="user-icon"></div>
-        <input name="password" type="password" class="input password" placeholder="Password" />
+        <input id=password" name="password" type="password" class="input password" placeholder="Password" />
         <div class="pass-icon"></div>
     </div>
 
     <div class="footer">
-        <a href="#" class="button">Register</a>
-    </div>
 
+        <button id = "rgstnBtn" class="button">Register</button>    </div>
+        already member? please <a href="http://localhost:8080/register">Login</a>
 </form>
 
 
 </body>
+<script>
+    $("#rgstnBtn").click(function () {
+        var password = $("#password").val();
+        var username = $("#username").val();
+        if(username && password) {
+            $.post("/register/" + username + "/" + password, function (data) {
+                var status = data;
+                if (status === '500') {
+                    alert("invalid username or password")
+                } else {
+                    alert("welcome");
+                    window.parent.location = "http://localhost:8080/item";
+                }
+            });
+        }else{
+            alert('please insert valid user name and password')
+        }
+    })
+</script>
 </html>
