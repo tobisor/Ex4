@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TO DO LISTS</title>
+    <link rel="stylesheet" href="css/ItemStyle.css">
+</head>
+<meta name="viewport" content="width=device-width">
+<body>
+
+    <h1 style="color: #595959;display:inline-block;">WHAT DO I HAVE TO DO</h1><br>
+
+    <h2 style="color: #595959;display:inline-block;">EDIT LISTS</h2><br>
+
+    <div style="font-weight: bold">If you want to delete a list, please enter it's name.<br></div>
+    <input type="deleteListName" id="deleteListName" placeholder="List name" required/>
+    <button class = button id="dltLstBtn" type = 'button'>DELETE!</button>
+    <br>
+
+    <div style="font-weight: bold">If you want to add a list, please entername and color.<br></div>
+    <input type="addListName" id="addListName" placeholder="List name" required/>
+    <select type="addListName" id="addListcolor">
+        <option value="#00ff00">Green</option>
+        <option value="#ff0000">Red</option>
+        <option value="#0000ff">Blue</option>
+        <option value="#ffff00">Yellow</option>
+    </select>
+    <button class = button id="addLstBtn" type = 'button'>ADD!</button>
+    <br>
+
+    <div style="font-weight: bold">If you want to share a list, please enter list name and other user-name.<br></div>
+    <input type="shareListName" id="shareListName" placeholder="List name" required/>
+    <input type="shareListUserName" id="shareListUserName" placeholder="User name" required/>
+    <button class = button id="shareLstBtn" type = 'button'>SHARE!</button>
+    <br>
+
+    <h2 style="color: #595959;display:inline-block;">EDIT ITEMS</h2><br>
+    <div style="font-weight: bold">please enter list name and job<br></div>
+    <input type="srchListName" id="srchListName" placeholder="List name" required/>
+    <input type="jobName" id="jobName" placeholder="TODO" required/>
+    <div style="font-weight: bold">what would you like to do?<br></div>
+    <button class = button id="addItemBtn" type = 'button'>ADD!</button>
+    <button class = button id="deleteItemBtn" type = 'button'>DELETE!</button>
+    <button class = button id="serchItemBtn" type = 'button'>SEARCH!</button>
+</body>
+<script>
+    function showHide(num){
+        var str = "table" + num;
+        var e = document.getElementById(str);
+        if (x.style.display === 'none') {
+            x.style.display = 'block';
+        } else {
+            x.style.display = 'none';
+        }
+    }
+</script>
+</html>
