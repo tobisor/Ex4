@@ -42,8 +42,69 @@
     <button class = button id="addItemBtn" type = 'button'>ADD!</button>
     <button class = button id="deleteItemBtn" type = 'button'>DELETE!</button>
     <button class = button id="serchItemBtn" type = 'button'>SEARCH!</button>
+    <br>
+    <br>
+
+    <div id = "listsDiv" style=" ">
+        <button class = button id="loadLstsBtn" type = 'button'>LOAD LISTS!</button>
+        <table id = 'nextList'></table>
+    </div>
+
 </body>
 <script>
+    var deafultColor = "#00ff00";
+    $("#dltLstBtn").click(function(){
+        var listName = $("#deleteListName").val();
+        console.log("start list deletion");
+        if (listName){
+            deleteList(listName);
+        }else {
+            alert("Please insert valid name!")
+        }
+    });
+
+    function deleteList(listName){
+        $.ajax({
+            url:"http://localhost:8080/item/"+listName,
+            type: "DELETE",
+            success: function(){
+                alert("Deletion completed")
+            },
+            error: function (status) {
+                if (status === 500){
+                    window.parent.location = "http://localhost:8080/login";
+                }else{
+                    alert("missing list")
+                }
+            }
+        })
+    }
+
+    $("#addLstBtn").click(function(){
+       var obj = new Object();
+       obj.name = $("#addListName").val();
+       obj.color = ($("#addListcolor").val())? $("#addListcolor").val():deafultColor;
+       var urlString = JSON.stringify(obj);
+       console.log(urlString);
+       if(obj.name){
+           $.post("/item/" , urlString , function(data){
+               console.log(data);
+               if (data === "500") {
+                   window.parent.location = "http://localhost:8080/login";
+               } else if (data ==='404'){
+                   alert('something went wrong');
+               }else {
+                   alert('new list added succesfuly');
+               }
+           });
+       }else {
+           alert('please insert valid name');
+       }
+        location.reload();
+    })
+
+
+
     function showHide(num){
         var str = "table" + num;
         var e = document.getElementById(str);
@@ -51,6 +112,32 @@
             x.style.display = 'block';
         } else {
             x.style.display = 'none';
+        }
+    }
+
+    function printTable(list){
+        var html = "<table border='1|1' id = 'itemTable'>";
+        html += "<tr>";
+        html += "<th>NAME</th>";
+
+        html += "</tr>";
+        for (var i = 0; i < data.length; i++) {
+
+            if (data[i]) {
+                html += "<tr>";
+                html += "<td>" + list[i].name + "</td>";
+
+                html += "</tr>";
+
+            }
+            html+="</table>";
+            console.log(html);
+            var table = document.createElement('table');
+            table.id = "itemTable";
+            table.cellSpacing = "10"
+            table.innerHTML = html;
+            table.color = "orange";
+            document.getElementById('tableDiv').appendChild(table);
         }
     }
 </script>
