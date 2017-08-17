@@ -1,5 +1,5 @@
 /**
- * Created by or on 6/15/2017.
+ * Created by omer on 17/8/2017.
  */
 var express = require('express');
 var path = require('path');
@@ -31,14 +31,6 @@ app.use(function (req, res, next) {
 
 var userCounter = 0;
 var registerdUser = [];
-var items = [];
-var itemsNum = 0;
-/******DataBase INIT*******/
-items[itemsNum] =  {'id':itemsNum, 'size':20, 'price': 2,'data':'(Or)ange'};
-itemsNum++;
-
-items[itemsNum] = {'id':itemsNum, 'size':13, 'price': 1,'data':'O(me)range'};
-itemsNum++;
 
 
 registerdUser["omer"] = new Object();
@@ -75,6 +67,7 @@ app.post("/register/:username/:password", function(req, res) {
         registerdUser[username]= new Object();
         registerdUser[username].uid = userCounter;
         registerdUser[username].password = pass;
+        registerdUser[username].lists = [];
         userCounter++;
         console.log("regArray int " +username + " is " +JSON.stringify(registerdUser[username]))
         res.cookie("uid",registerdUser[username].uid,{maxAge: 3600000});
