@@ -131,14 +131,13 @@ app.post("/item/", function(req, res,next) {
     if (verifyAccess(req)) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
-
-        if (!items[itemJson.id]){  //if item doesn't exist
-            items[itemJson.id] = new Object();
+        var usr = findUser(req);
+        if (!registerdUser[usr].lists[itemJson.name]){  //if item doesn't exist
+            registerdUser[usr].lists[itemJson.name] = new Object();
             Object.keys(itemJson).forEach(function (key){
-                items[itemJson.id][key] = itemJson[key];
+                registerdUser[usr].lists[itemJson.name][key] = itemJson[key];
 
             })
-            itemsNum++;
             res.status(200).send('200');
         }else {
             res.status(404).send('404');
@@ -183,15 +182,16 @@ app.put("/item/", function(req, res,next){
     }
 });
 
-app.delete("/item/:id", function(req, res){
+app.delete("/item/:listName", function(req, res){
 
     if (verifyAccess(req)){
         var curUid = req.cookies.uid;
+        var lst = req.params.listName;
+        var usr = findUser(req);
         res.cookie('uid',curUid,{maxAge:3600000})
-        if (items[req.params.id]){
+        if (registeredUser[usr].lists[lst]){
             //delete and edit item coumter
-            items[req.params.id]= null;
-            itemsNum--;
+            registeredUser[usr].lists[lst] = null;
             res.status(200).send('200');
         }else{
             res.status(404).send('404');
@@ -201,9 +201,6 @@ app.delete("/item/:id", function(req, res){
     }
 });
 
-/******LISTEN*******/
-app.listen(port);
-console.log('listening to '+ port);
 
 /**
  * function to check validity of cookies
@@ -226,3 +223,24 @@ function verifyAccess(req) {
 
    return verified;
 }
+
+function findUser(req) {
+
+    var cuid = req.cookies.uid;
+
+    var usr = -1;
+    if (cuid){
+       Object.keys(registerdUser).forEach(function(user){
+
+           if (cuid == registerdUser[user].uid){
+               usr = user;
+           }
+       });
+    }
+
+   return usr;
+}
+
+/******LISTEN*******/
+app.listen(port); 
+console.log('listening to '+ port);
