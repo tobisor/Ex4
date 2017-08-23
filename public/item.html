@@ -52,18 +52,21 @@
 </body>
 <script>
 
-    function getAllLists(listName){
+    function getAllLists(){
         $.get("/userlists/",function (data){
             if (data === '500'){
                 window.parent.location =  "http://localhost:8080/login";
             }else if(data === '404'){
-                alert('something went wrong');
+                alert('something went wrong with getting all the lists');
             }else {
                 alert(JSON.parse(data.body));
 
             }
         })
     }
+
+    $( document ).ready(getAllLists());
+
     var deafultColor = "#595959";
 
     $("#dltLstBtn").click(function(){
@@ -132,7 +135,7 @@
                 if (status === 500){
                     window.parent.location = "http://localhost:8080/login";
                 }else{
-                    alert("something went wrong :(")
+                    alert("something went wrong1 :(")
                 }
             }
         })
@@ -212,8 +215,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    function showHide(num){
-        var str = "table" + num;
+    function showHide(){
+        var str = name + "Table" ;
         var e = document.getElementById(str);
         if (x.style.display === 'none') {
             x.style.display = 'block';
@@ -222,14 +225,14 @@
         }
     }
 
-    /*var lishti = ["hi","bye","check"];
+    var lishti = ["hi","bye","check"];
     var coolor  = "#1fe176";
     var namee = "oranus";
     printTable(lishti,coolor,namee);
     var lishti1 = ["hi23","by12e","ch234eck"];
     var coolor2  = "#ff5d5b";
     var namee3 = "oranuw";
-    printTable(lishti1,coolor2,namee3);*/
+    printTable(lishti1,coolor2,namee3);
 
     function printTable(data,color,name){
         var html = "<table border='1|1' id =";
@@ -255,13 +258,21 @@
             html+="</table>";
             console.log(html);
             var table = document.createElement('table');
-            table.id = name;
+            table.id = name+"Table";
             table.cellSpacing = "10";
             table.innerHTML = html;
             table.setAttribute("bgcolor",color);
+            table.style.display = 'block';
             var button = document.createElement('button');
-            button
-            document.getElementById('listsDiv').appendChild(table);
+            button.id = name;
+            var t = document.createTextNode("Show/Hide");
+            button.appendChild(t);
+            button.onclick = showHide;
+            var div = document.createElement('div');
+            div.appendChild(table);
+            div.id = name+"Div";
+            div.appendChild(button);
+            document.getElementById('listsDiv').appendChild(div);
 
     }
     /**
