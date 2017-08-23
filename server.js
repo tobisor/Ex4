@@ -150,8 +150,8 @@ app.get("/sharedlists/", function(req, res){
         var urlString = JSON.stringify(obj);
         console.log(urlString);
         for (var i = 0; i < obj.length; i++) {
-            if (registeredUser[registerdUser[usr].shared[i]].lists[i]) {
-                obj[i] = registeredUser[registerdUser[usr].shared[i]].lists[i];
+            if (registeredUser[registerdUser[usr].shared[i].user].lists[registerdUser[usr].shared[i].name]) {
+                obj[i] = registeredUser[registerdUser[usr].shared[i].user].lists[registerdUser[usr].shared[i].name];
             }
         }
         urlString = JSON.stringify(obj);
@@ -175,8 +175,10 @@ app.post("/item/share/", function(req, res) {
         var other = itemJson.otherUserName;
         if (registerdUser[usr].lists[lst] && !registerdUser[usr].lists[lst].shared){  //if list exists and is not shared yet
             registerdUser[usr].lists[lst].shared = true;
-            registerdUser[other].shared[lst] = new Object();
-            registerdUser[other].shared[lst].user = usr;
+            var index = registerdUser[other].shared.length;
+            registerdUser[other].shared[index] = new Object();
+            registerdUser[other].shared[index].user = usr;
+            registerdUser[other].shared[index].name = lst;
             res.status(200).send('200');
         }else {
             res.status(404).send('404');
@@ -187,7 +189,7 @@ app.post("/item/share/", function(req, res) {
     }
 }); 
 
-app.post("/item/", function(req, res,next) {
+app.post("/item/", function(req, res) {
     console.log(req.body)
     var itemJson= JSON.parse(req.body) //parse item into json
     var usr = findUser[req];
@@ -196,10 +198,10 @@ app.post("/item/", function(req, res,next) {
         res.cookie('uid', curUid, {maxAge: 3600000})
         if (!registerdUser[usr].lists[itemJson.name]){  //if item doesn't exist
             registerdUser[usr].lists[itemJson.name] = new Object();
-            Object.keys(itemJson).forEach(function (key){
-                registerdUser[usr].lists[itemJson.name][key] = itemJson[key];
-
-            })
+            registerdUser[usr].lists[itemJson.name].color = itemJson.color;
+            registerdUser[usr].lists[itemJson.name].name = itemJson.name;
+            registerdUser[usr].lists[itemJson.name].jobs = [];
+            registerdUser[usr].lists[itemJson.name].shared = false;
             registerdUser[usr].lists[itemJson.name].owner = usr;
             res.status(200).send('200');
         }else {
