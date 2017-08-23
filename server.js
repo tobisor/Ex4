@@ -65,7 +65,7 @@ app.post("/register/:username/:password", function(req, res) {
         registerdUser[username].uid = userCounter;
         registerdUser[username].password = pass;
         registerdUser[username].lists = [];
-        userCounter++;
+        registerdUser[username].shared = [];
         console.log("regArray int " +username + " is " +JSON.stringify(registerdUser[username]))
         res.cookie("uid",registerdUser[username].uid,{maxAge: 3600000});
 
@@ -126,10 +126,34 @@ app.get("/userlists/", function(req, res){
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
         if (registerdUser[usr]) {
-        var obj = 
+        var obj = registerdUser[usr].lists;
         var urlString = JSON.stringify(obj);
         console.log(urlString);
-        res.status(200);
+        res.status(200).send(obj);
+        }else {
+        res.status(404);   
+        }
+    }else{
+        res.status(500);
+    }
+});
+
+app.get("/sharedlists/", function(req, res){
+    var usr = findUser[req];
+    if (usr) {
+        var curUid = req.cookies.uid;
+        res.cookie('uid', curUid, {maxAge: 3600000})
+        if (registerdUser[usr]) {
+        var obj = registerdUser[usr].shared;
+        var urlString = JSON.stringify(obj);
+        console.log(urlString);
+        for (var i = 0; i < obj.length; i++) {
+            if (registeredUser[registerdUser[usr].shared[i]].lists[i]) {
+                obj[i] = registeredUser[registerdUser[usr].shared[i]].lists[i];
+            }
+        }
+        urlString = JSON.stringify(obj);
+        res.status(200).send(urlString);
         }else {
         res.status(404);   
         }
@@ -174,6 +198,7 @@ app.post("/item/", function(req, res,next) {
                 registerdUser[usr].lists[itemJson.name][key] = itemJson[key];
 
             })
+            registerdUser[usr].lists[itemJson.name].owner = usr;
             res.status(200).send('200');
         }else {
             res.status(404).send('404');
