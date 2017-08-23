@@ -4,7 +4,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>TO DO LISTS</title>
-    <link rel="stylesheet" href="css/ItemStyle.css">
+    <!--<link rel="stylesheet" href="css/ItemStyle.css">-->
 </head>
 <meta name="viewport" content="width=device-width">
 <body>
@@ -216,8 +216,8 @@
 
 
     function showHide(){
-        var str = name + "Table" ;
-        var e = document.getElementById(str);
+        var str = this.id + "Table" ;
+        var x = document.getElementById(str);
         if (x.style.display === 'none') {
             x.style.display = 'block';
         } else {
@@ -236,7 +236,7 @@
 
     function printTable(data,color,name){
         var html = "<table border='1|1' id =";
-        html += "'"+name+"'" ;
+        html += "'" + name + "'" ;
         html += " style='background-color:";
         html += color + "'";
         html += ">";
@@ -258,16 +258,17 @@
             html+="</table>";
             console.log(html);
             var table = document.createElement('table');
-            table.id = name+"Table";
+            table.id = name+ "Table";
             table.cellSpacing = "10";
             table.innerHTML = html;
             table.setAttribute("bgcolor",color);
             table.style.display = 'block';
+            //creating button
             var button = document.createElement('button');
             button.id = name;
-            var t = document.createTextNode("Show/Hide");
-            button.appendChild(t);
+            button.innerHTML = "Show/Hide";
             button.onclick = showHide;
+            //creating new div
             var div = document.createElement('div');
             div.appendChild(table);
             div.id = name+"Div";
