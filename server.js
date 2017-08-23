@@ -120,6 +120,24 @@ app.get("/logout/", function(req, res){
     }
 });
 
+app.get("/userlists/", function(req, res){
+    var usr = findUser[req];
+    if (usr) {
+        var curUid = req.cookies.uid;
+        res.cookie('uid', curUid, {maxAge: 3600000})
+        if (registerdUser[usr]) {
+        var obj = 
+        var urlString = JSON.stringify(obj);
+        console.log(urlString);
+        res.status(200);
+        }else {
+        res.status(404);   
+        }
+    }else{
+        res.status(500);
+    }
+});
+
 app.post("/item/share/", function(req, res) {
     console.log(req.body)
     var itemJson= JSON.parse(req.body) //parse item into json
