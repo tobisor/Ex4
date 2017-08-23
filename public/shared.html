@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    function getSharedLists(listName){
+        $.get("/sharedlists/",function (data){
+            if (data === '500'){
+                window.parent.location =  "http://localhost:8080/login";
+            }else if(data === '404'){
+                alert('something went wrong');
+            }else {
+                alert(JSON.parse(data.body));
+
+            }
+        })
+    }
+</script>
+</html>

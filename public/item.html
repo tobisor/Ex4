@@ -54,7 +54,14 @@
 
     function getAllLists(listName){
         $.get("/userlists/",function (data){
+            if (data === '500'){
+                window.parent.location =  "http://localhost:8080/login";
+            }else if(data === '404'){
+                alert('something went wrong');
+            }else {
+                alert(JSON.parse(data.body));
 
+            }
         })
     }
     var deafultColor = "#595959";
