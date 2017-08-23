@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>TO DO LISTS</title>
     <link rel="stylesheet" href="css/ItemStyle.css">
@@ -17,14 +18,9 @@
     <button class = button id="dltLstBtn" type = 'button'>DELETE!</button>
     <br>
 
-    <div style="font-weight: bold">If you want to add a list, please entername and color.<br></div>
+    <div style="font-weight: bold">If you want to add a list, please enter name and choose color.<br></div>
     <input type="addListName" id="addListName" placeholder="List name" required/>
-    <select type="addListName" id="addListcolor">
-        <option value="#00ff00">Green</option>
-        <option value="#ff0000">Red</option>
-        <option value="#0000ff">Blue</option>
-        <option value="#ffff00">Yellow</option>
-    </select>
+    <input type="color" id="addListcolor" value = #595959  ></input>
     <button class = button id="addLstBtn" type = 'button'>ADD!</button>
     <br>
 
@@ -45,7 +41,7 @@
     <br>
     <br>
 
-    <div id = "listsDiv" style=" ">
+    <div id = "listsDiv" >
         <button class = button id="loadLstsBtn" type = 'button'>LOAD LISTS!</button>
         <table id = 'nextList'></table>
     </div>
@@ -55,7 +51,14 @@
 
 </body>
 <script>
-    var deafultColor = "#00ff00";
+
+    function getAllLists(listName){
+        $.get("/userlists/",function (data){
+
+        })
+    }
+    var deafultColor = "#595959";
+
     $("#dltLstBtn").click(function(){
         var listName = $("#deleteListName").val();
         console.log("start list deletion");
@@ -84,7 +87,7 @@
     }
 
     $("#addLstBtn").click(function(){
-       var obj = new Object();
+       var obj = {};
        obj.name = $("#addListName").val();
        obj.color = ($("#addListcolor").val())? $("#addListcolor").val():deafultColor;
        var urlString = JSON.stringify(obj);
@@ -104,7 +107,7 @@
            alert('please insert valid name');
        }
         location.reload();
-    })
+    });
 ///////////////LOG OUT AND DELETE USER////////////////
     $("#logOutBtn").click(logOut());
 
@@ -115,7 +118,7 @@
             url:"http://localhost:8080/item/deleteUser",
             type: "DELETE",
             success: function(){
-                alert("Deletion completed")
+                alert("Deletion completed");
                 window.parent.location = "http://localhost:8080/login";
             },
             error: function (status) {
@@ -135,14 +138,14 @@
             }else if(data === '404'){
                 alert('something went wrong');
             }else {
-                alert('loged out')
+                alert('loged out');
                 window.parent.location =  "http://localhost:8080/login";
             }
         })
     }
    /////////////////////////////////////////////////////
     $("#shareLstBtn").click(function(){
-        var obj = new Object();
+        var obj = {};
         obj.listName = $("#shareListName").val();
         obj.otherUserName = $("#shareListUserName").val();
         var urlString = JSON.stringify(obj);
@@ -161,7 +164,7 @@
         }else {
             alert('please insert valid inputs');
         }
-    })
+    });
 
 
     /*//////////////DELETE ITEM FROM LIST////////////////*/
@@ -174,10 +177,10 @@
         }else {
             alert("please enter valid inputs");
         }
-    }
+    });
 
     function deleteItem(listName, itemName) {
-        var obj = new Object();
+        var obj = {};
         obj.listName = listName;
         obj.itemMame = itemName;
         var urlString = JSON.stringify(obj);
@@ -212,30 +215,47 @@
         }
     }
 
-    function printTable(list){
-        var html = "<table border='1|1' id = 'itemTable'>";
+    /*var lishti = ["hi","bye","check"];
+    var coolor  = "#1fe176";
+    var namee = "oranus";
+    printTable(lishti,coolor,namee);
+    var lishti1 = ["hi23","by12e","ch234eck"];
+    var coolor2  = "#ff5d5b";
+    var namee3 = "oranuw";
+    printTable(lishti1,coolor2,namee3);*/
+
+    function printTable(data,color,name){
+        var html = "<table border='1|1' id =";
+        html += "'"+name+"'" ;
+        html += " style='background-color:";
+        html += color + "'";
+        html += ">";
         html += "<tr>";
-        html += "<th>NAME</th>";
+        html += "<th>"+name+"</th>";
 
         html += "</tr>";
+        console.log("length is: "+ data.length);
         for (var i = 0; i < data.length; i++) {
-
+            console.log(i);
             if (data[i]) {
                 html += "<tr>";
-                html += "<td>" + list[i].name + "</td>";
+                html += "<td>" + data[i] + "</td>";
 
                 html += "</tr>";
 
             }
+        }
             html+="</table>";
             console.log(html);
             var table = document.createElement('table');
-            table.id = "itemTable";
-            table.cellSpacing = "10"
+            table.id = name;
+            table.cellSpacing = "10";
             table.innerHTML = html;
-            table.color = "orange";
-            document.getElementById('tableDiv').appendChild(table);
-        }
+            table.setAttribute("bgcolor",color);
+            var button = document.createElement('button');
+            button
+            document.getElementById('listsDiv').appendChild(table);
+
     }
     /**
      * check if both inputs are not null
