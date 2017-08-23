@@ -27,9 +27,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-
-
-var userCounter = 0;
 var registerdUser = [];
 
 
@@ -44,15 +41,15 @@ userCounter++;
 
 /***************get requests for html pages*********************/
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/public/hello.html');
+    res.sendFile(__dirname + '/public/login.html');
 });
 
 app.get('/login/', function(req, res){
-    res.sendFile(__dirname + '/public/hello.html');
+    res.sendFile(__dirname + '/public/login.html');
 });
 
-app.get('public/hello.html', function(req, res){
-    res.sendFile(__dirname + '/public/hello.html');
+app.get('public/login.html', function(req, res){
+    res.sendFile(__dirname + '/public/login.html');
 });
 
 app.get('/register/', function(req, res){
@@ -96,42 +93,63 @@ app.post("/login/:username/:password", function(req, res) {
     }
 });
 
-app.get('/item/:id', function(req, res){
-
-    if (verifyAccess(req)) {
-
-        var curUid = req.cookies.uid;  //get uid from cookie, to send it again
-        res.cookie('uid',curUid,{maxAge:3600000})
-        if (items[req.params.id]){     // if item exist
-            res.status(200).json(items[req.params.id]);
-        }else {
-            res.status(404).send('404');
-        }
-    }else {
-        res.status(500).send('500');
-    }
-});
-
-app.get('/items/', function(req, res){
-    if (verifyAccess(req)){
+app.get("/item/", function(req, res){
+    var usr = findUser[req];
+    if (usr) {
         var curUid = req.cookies.uid;
-        res.cookie('uid',curUid,{maxAge:3600000})
-        res.status(200).send(items);
-
+        res.cookie('uid', curUid, {maxAge: 3600000})
+        res.status(200).sendFile(__dirname + '/public/item.html');
     }else{
         res.status(500);
         res.sendFile(__dirname + '/public/hello.html');
     }
 });
 
-app.post("/item/", function(req, res,next) {
-    console.log(req.body)
-    var itemJson= JSON.parse(req.body) //parse the item into json
-
-    if (verifyAccess(req)) {
+app.get("/logout/", function(req, res){
+    var usr = findUser[req];
+    if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
-        var usr = findUser(req);
+        if (registerdUser[usr]) {
+        res.status(200);
+        }else {
+        res.status(404);   
+        }
+    }else{
+        res.status(500);
+    }
+});
+
+app.post("/item/share/", function(req, res) {
+    console.log(req.body)
+    var itemJson= JSON.parse(req.body) //parse item into json
+    var usr = findUser[req];
+    if (usr) {
+        var curUid = req.cookies.uid;
+        res.cookie('uid', curUid, {maxAge: 3600000})
+        var lst = itemJson.listName;
+        var other = itemJson.otherUserName;
+        if (registerdUser[usr].lists[lst] && !registerdUser[usr].lists[lst].shared){  //if list exists and is not shared yet
+            registerdUser[usr].lists[lst].shared = true;
+            registerdUser[other].shared[lst] = new Object();
+            registerdUser[other].shared[lst].user = usr;
+            res.status(200).send('200');
+        }else {
+            res.status(404).send('404');
+        }
+    }else{
+        res.status(500).send('500');
+
+    }
+}); 
+
+app.post("/item/", function(req, res,next) {
+    console.log(req.body)
+    var itemJson= JSON.parse(req.body) //parse item into json
+    var usr = findUser[req];
+    if (usr) {
+        var curUid = req.cookies.uid;
+        res.cookie('uid', curUid, {maxAge: 3600000})
         if (!registerdUser[usr].lists[itemJson.name]){  //if item doesn't exist
             registerdUser[usr].lists[itemJson.name] = new Object();
             Object.keys(itemJson).forEach(function (key){
@@ -147,31 +165,18 @@ app.post("/item/", function(req, res,next) {
 
     }
 });
-/**
- * get item.html
- */
-app.get("/item/", function(req, res,next){
-    if (verifyAccess(req)) {
-        var curUid = req.cookies.uid;
-        res.cookie('uid', curUid, {maxAge: 3600000})
-        res.status(200).sendFile(__dirname + '/public/item.html');
-    }else{
-        res.status(500);
-        res.sendFile(__dirname + '/public/hello.html');
-    }
-});
 
 app.put("/item/", function(req, res,next){
-
+    console.log(req.body)
     var itemJson= JSON.parse(req.body) //parsing item to json
-
-    if (verifyAccess(req)) {
+    var usr = findUser[req];
+    if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
-        if (items[itemJson.id]){        //if item exist
+        if (registerdUser[usr].lists[itemJson.name]){        //if item exist
             Object.keys(itemJson).forEach(function (key){
                 if(itemJson[key]) {     //if key has value
-                    items[itemJson.id][key] = itemJson[key];
+                    registerdUser[usr].lists[itemJson.name][key] = itemJson[key];
                 }
             })
         }else {
@@ -183,11 +188,10 @@ app.put("/item/", function(req, res,next){
 });
 
 app.delete("/item/:listName", function(req, res){
-
-    if (verifyAccess(req)){
+    var usr = findUser[req];
+    if (usr) {
         var curUid = req.cookies.uid;
         var lst = req.params.listName;
-        var usr = findUser(req);
         res.cookie('uid',curUid,{maxAge:3600000})
         if (registeredUser[usr].lists[lst]){
             //delete and edit item coumter
@@ -201,13 +205,48 @@ app.delete("/item/:listName", function(req, res){
     }
 });
 
+app.delete("/item/deleteUser", function(req, res){
+    var usr = findUser[req];
+    if (usr) {
+        var curUid = req.cookies.uid;
+        res.cookie('uid',curUid,{maxAge:3600000})
+        if (registeredUser[usr]){
+            registeredUser[usr] = null;
+            res.status(200).send('200');
+        }else{
+            res.status(404).send('404');
+        }
+    }else{
+        res.status(500).send('500');
+    }
+});
+
+app.delete("/item/deleteItem", function(req, res){
+    console.log(req.body)
+    var itemJson= JSON.parse(req.body)
+    var usr = findUser[req];
+    if (usr) {
+        var curUid = req.cookies.uid;
+        var lst = itemJson.listName;
+        var itm = itemJson.itemName;
+        res.cookie('uid',curUid,{maxAge:3600000})
+        if (registeredUser[usr].lists[lst].jobs[itm]){
+            registeredUser[usr].lists[lst].jobs[itm] = null;
+            res.status(200).send('200');
+        }else{
+            res.status(404).send('404');
+        }
+    }else{
+        res.status(500).send('500');
+    }
+});
 
 /**
  * function to check validity of cookies
  * @param req
  * @returns {boolean} - if cookie is vaalid or not
  */
-function verifyAccess(req) {
+/* function verifyAccess(req) {
 
     var cuid = req.cookies.uid;
 
@@ -222,7 +261,7 @@ function verifyAccess(req) {
     }
 
    return verified;
-}
+}  */
 
 function findUser(req) {
 
