@@ -27,6 +27,7 @@ app.use(function (req, res, next) {
     next();
 });
 
+var userCounter = 0;
 var registerdUser = [];
 
 
@@ -66,6 +67,7 @@ app.post("/register/:username/:password", function(req, res) {
         registerdUser[username].password = pass;
         registerdUser[username].lists = [];
         registerdUser[username].shared = [];
+        userCounter++;
         console.log("regArray int " +username + " is " +JSON.stringify(registerdUser[username]))
         res.cookie("uid",registerdUser[username].uid,{maxAge: 3600000});
 
