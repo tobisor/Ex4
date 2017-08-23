@@ -69,6 +69,28 @@
 
     var deafultColor = "#595959";
 
+    $("#addItemBtn").click(function(){
+        var obj = new Object();
+        obj.listName = $("#srchListName").val();
+        obj.job = $("#jobName").val();
+        if ((obj.listName)&&(obj.job)){
+            var urlString = JSON.stringify(obj);
+            console.log("job to add is " + urlString);
+            $.post("/addJob/",urlString, function (data) {
+                if (data === '500'){
+                    window.parent.location = "http://localhost:8080/login";
+                }else if (data === '404'){
+                    alert("such list does not exist");
+                }else {
+                    alert("job added successfully");
+                }
+            })
+        }else {
+            alert("enter valid inputs");
+        }
+        location.reload();
+    });
+
     $("#dltLstBtn").click(function(){
         var listName = $("#deleteListName").val();
         console.log("start list deletion");
@@ -200,7 +222,7 @@
             data: urlString,
             success: function(){
                 alert("Deletion completed")
-                //TODO : get all lists
+                location.reload();
             },
             error: function (status) {
                 if (status === 500){
