@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<meta name="viewport" content="width=device-width">
+<h1 style="color: #595959;display:inline-block;">SHARED LISTS</h1><br>
 
+<div id = "listsDiv" >
+    <table id = 'nextList'></table>
+</div>
 </body>
 <script>
     function getSharedLists(listName){
@@ -15,10 +21,73 @@
             }else if(data === '404'){
                 alert('something went wrong');
             }else {
-                alert(JSON.parse(data.body));
+                for (var i = 0; i < data.length ; i++){
+                    if (data[i]){
+                        var name = data[i].name;
+                        var color = data[i].color;
+                        var jobs = data[i].jobs;
+                        var owner = data[i].jobs;
+                        if ((name)&&(color)&&(jobs)&&(owner)){
+                            printTable(jobs,color,name,owner);
+                        }
+                    }
+                }
 
             }
         })
+    }
+
+    function showHide(){
+        var str = this.id + "Table" ;
+        var e = document.getElementById(str);
+        if (e.style.display === 'none') {
+            e.style.display = 'block';
+        } else {
+            e.style.display = 'none';
+        }
+    }
+
+    function printTable(data,color,name,owner){
+        var html = "<table border='1|1' id =";
+        html += "'" + name + "'" ;
+        html += " style='background-color:";
+        html += color + "'";
+        html += ">";
+        html += "<tr>";
+        html += "<th>"+ name +" "+ owner +"</th>";
+
+        html += "</tr>";
+        console.log("length is: "+ data.length);
+        for (var i = 0; i < data.length; i++) {
+            console.log(i);
+            if (data[i]) {
+                html += "<tr>";
+                html += "<td>" + data[i] + "</td>";
+
+                html += "</tr>";
+
+            }
+        }
+        html+="</table>";
+        console.log(html);
+        var table = document.createElement('table');
+        table.id = name+ "Table";
+        table.cellSpacing = "10";
+        table.innerHTML = html;
+        table.setAttribute("bgcolor",color);
+        table.style.display = 'none';
+        //creating button
+        var button = document.createElement('button');
+        button.id = name;
+        button.innerHTML = "Show/Hide " + name;
+        button.onclick = showHide;
+        //creating new div
+        var div = document.createElement('div');
+        div.appendChild(table);
+        div.id = name+"Div";
+        div.appendChild(button);
+        document.getElementById('listsDiv').appendChild(div);
+
     }
 </script>
 </html>

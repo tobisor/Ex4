@@ -42,7 +42,6 @@
     <br>
 
     <div id = "listsDiv" >
-        <button class = button id="loadLstsBtn" type = 'button'>LOAD LISTS!</button>
         <table id = 'nextList'></table>
     </div>
 
@@ -59,7 +58,16 @@
             }else if(data === '404'){
                 alert('something went wrong with getting all the lists');
             }else {
-                alert(JSON.parse(data.body));
+                for (var i = 0; i < data.length ; i++){
+                    if (data[i]){
+                        var name = data[i].name;
+                        var color = data[i].color;
+                        var jobs = data[i].jobs;
+                        if ((name)&&(color)&&(jobs)){
+                            printTable(jobs,color,name);
+                        }
+                    }
+                }
 
             }
         })
@@ -239,11 +247,11 @@
 
     function showHide(){
         var str = this.id + "Table" ;
-        var x = document.getElementById(str);
-        if (x.style.display === 'none') {
-            x.style.display = 'block';
+        var e = document.getElementById(str);
+        if (e.style.display === 'none') {
+            e.style.display = 'block';
         } else {
-            x.style.display = 'none';
+            e.style.display = 'none';
         }
     }
 
@@ -284,11 +292,11 @@
             table.cellSpacing = "10";
             table.innerHTML = html;
             table.setAttribute("bgcolor",color);
-            table.style.display = 'block';
+            table.style.display = 'none';
             //creating button
             var button = document.createElement('button');
             button.id = name;
-            button.innerHTML = "Show/Hide";
+            button.innerHTML = "Show/Hide " + name;
             button.onclick = showHide;
             //creating new div
             var div = document.createElement('div');
