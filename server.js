@@ -96,7 +96,7 @@ app.post("/login/:username/:password", function(req, res) {
 });
 
 app.get("/item/", function(req, res){
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
@@ -108,10 +108,10 @@ app.get("/item/", function(req, res){
 });
 
 app.get("/logout/", function(req, res){
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
-        var curUid = req.cookies.uid;
-        res.cookie('uid', curUid, {maxAge: 3600000})
+        res.clearCookie('uid');
+        res.redirect('/');
         if (registerdUser[usr]) {
         res.status(200);
         }else {
@@ -123,7 +123,7 @@ app.get("/logout/", function(req, res){
 });
 
 app.get("/userlists/", function(req, res){
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
@@ -141,7 +141,7 @@ app.get("/userlists/", function(req, res){
 });
 
 app.get("/sharedlists/", function(req, res){
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
@@ -167,7 +167,7 @@ app.get("/sharedlists/", function(req, res){
 app.post("/item/share/", function(req, res) {
     console.log(req.body)
     var itemJson= JSON.parse(req.body) //parse item into json
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
@@ -192,7 +192,7 @@ app.post("/item/share/", function(req, res) {
 app.post("/item/", function(req, res) {
     console.log(req.body)
     var itemJson= JSON.parse(req.body) //parse item into json
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
@@ -213,10 +213,29 @@ app.post("/item/", function(req, res) {
     }
 });
 
+app.post("/addJob/", function(req, res) {
+    console.log(req.body)
+    var itemJson= JSON.parse(req.body) //parse item into json
+    var usr = findUser(req);
+    if (usr) {
+        var curUid = req.cookies.uid;
+        res.cookie('uid', curUid, {maxAge: 3600000})
+        if (registerdUser[usr].lists[itemJson.listName]){  //if item doesn't exist
+            registerdUser[usr].lists[itemJson.listName].jobs[registerdUser[usr].lists[itemJson.listName].jobs.length] = itemJson.job;
+            res.status(200).send('200');
+        }else {
+            res.status(404).send('404');
+        }
+    }else{
+        res.status(500).send('500');
+
+    }
+});
+
 app.put("/item/", function(req, res,next){
     console.log(req.body)
     var itemJson= JSON.parse(req.body) //parsing item to json
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
@@ -235,7 +254,7 @@ app.put("/item/", function(req, res,next){
 });
 
 app.delete("/item/:listName", function(req, res){
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
         var curUid = req.cookies.uid;
         var lst = req.params.listName;
@@ -253,10 +272,10 @@ app.delete("/item/:listName", function(req, res){
 });
 
 app.delete("/item/deleteUser", function(req, res){
-    var usr = findUser[req];
+    var usr = findUser(req);
     if (usr) {
-        var curUid = req.cookies.uid;
-        res.cookie('uid',curUid,{maxAge:3600000})
+        res.clearCookie('uid');
+        res.redirect('/');
         if (registeredUser[usr]){
             registeredUser[usr] = null;
             res.status(200).send('200');
@@ -271,7 +290,7 @@ app.delete("/item/deleteUser", function(req, res){
 app.delete("/item/deleteItem", function(req, res){
     console.log(req.body)
     var itemJson= JSON.parse(req.body)
-    var usr = findUser[req];
+    var usr = findUser(req)s;
     if (usr) {
         var curUid = req.cookies.uid;
         var lst = itemJson.listName;
