@@ -28,16 +28,16 @@ app.use(function (req, res, next) {
 });
 
 var userCounter = 0;
-var registerdUser = [];
+var registeredUser = [];
 
 
-registerdUser["omer"] = new Object();
-registerdUser["omer"].password = "123";
-registerdUser["omer"].uid = userCounter;
+registeredUser["omer"] = new Object();
+registeredUser["omer"].password = "123";
+registeredUser["omer"].uid = userCounter;
 userCounter++;
-registerdUser["or"] = new Object();
-registerdUser["or"].password = "123";
-registerdUser["or"].uid = userCounter;
+registeredUser["or"] = new Object();
+registeredUser["or"].password = "123";
+registeredUser["or"].uid = userCounter;
 userCounter++;
 
 /***************get requests for html pages*********************/
@@ -62,14 +62,14 @@ app.post("/register/:username/:password", function(req, res) {
     var pass = req.params.password;
     //if username does not exist
     if (!registerdUser[username]){
-        registerdUser[username]= new Object();
-        registerdUser[username].uid = userCounter;
-        registerdUser[username].password = pass;
-        registerdUser[username].lists = [];
-        registerdUser[username].shared = [];
+        registeredUser[username]= new Object();
+        registeredUser[username].uid = userCounter;
+        registeredUser[username].password = pass;
+        registeredUser[username].lists = [];
+        registeredUser[username].shared = [];
         userCounter++;
-        console.log("regArray int " +username + " is " +JSON.stringify(registerdUser[username]))
-        res.cookie("uid",registerdUser[username].uid,{maxAge: 3600000});
+        console.log("regArray int " +username + " is " +JSON.stringify(registeredUser[username]))
+        res.cookie("uid",registeredUser[username].uid,{maxAge: 3600000});
 
         res.status(200).send("200");
 
@@ -82,10 +82,10 @@ app.post("/login/:username/:password", function(req, res) {
     var username = req.params.username;
     var pass = req.params.password;
     //user exist and password match
-    if ((registerdUser[username])&& (registerdUser[username].password === pass)){
+    if ((registeredUser[username])&& (registeredUser[username].password === pass)){
 
-        console.log("cookie ! and the uid is " + registerdUser[username].uid );
-        res.cookie("uid",registerdUser[username].uid,{maxAge: 3600000});
+        console.log("cookie ! and the uid is " + registeredUser[username].uid );
+        res.cookie("uid",registeredUser[username].uid,{maxAge: 3600000});
         res.status(200).send("200");
 
     } else {
@@ -112,7 +112,7 @@ app.get("/logout/", function(req, res){
     if (usr) {
         res.clearCookie('uid');
         res.redirect('/');
-        if (registerdUser[usr]) {
+        if (registeredUser[usr]) {
         res.status(200);
         }else {
         res.status(404);   
@@ -127,8 +127,8 @@ app.get("/userlists/", function(req, res){
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
-        if (registerdUser[usr]) {
-        var obj = registerdUser[usr].lists;
+        if (registeredUser[usr]) {
+        var obj = registeredUser[usr].lists;
         var urlString = JSON.stringify(obj);
         console.log(urlString);
         res.status(200).send(obj);
@@ -145,13 +145,13 @@ app.get("/sharedlists/", function(req, res){
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
-        if (registerdUser[usr]) {
-        var obj = registerdUser[usr].shared;
+        if (registeredUser[usr]) {
+        var obj = registeredUser[usr].shared;
         var urlString = JSON.stringify(obj);
         console.log(urlString);
         for (var i = 0; i < obj.length; i++) {
-            if (registeredUser[registerdUser[usr].shared[i].user].lists[registerdUser[usr].shared[i].name]) {
-                obj[i] = registeredUser[registerdUser[usr].shared[i].user].lists[registerdUser[usr].shared[i].name];
+            if (registeredUser[registeredUser[usr].shared[i].user].lists[registeredUser[usr].shared[i].name]) {
+                obj[i] = registeredUser[registeredUser[usr].shared[i].user].lists[registeredUser[usr].shared[i].name];
             }
         }
         urlString = JSON.stringify(obj);
@@ -173,12 +173,12 @@ app.post("/item/share/", function(req, res) {
         res.cookie('uid', curUid, {maxAge: 3600000})
         var lst = itemJson.listName;
         var other = itemJson.otherUserName;
-        if (registerdUser[usr].lists[lst] && !registerdUser[usr].lists[lst].shared){  //if list exists and is not shared yet
+        if (registeredUser[usr].lists[lst] && !registeredUser[usr].lists[lst].shared){  //if list exists and is not shared yet
             registerdUser[usr].lists[lst].shared = true;
-            var index = registerdUser[other].shared.length;
-            registerdUser[other].shared[index] = new Object();
-            registerdUser[other].shared[index].user = usr;
-            registerdUser[other].shared[index].name = lst;
+            var index = registeredUser[other].shared.length;
+            registeredUser[other].shared[index] = new Object();
+            registeredUser[other].shared[index].user = usr;
+            registeredUser[other].shared[index].name = lst;
             res.status(200).send('200');
         }else {
             res.status(404).send('404');
@@ -197,12 +197,12 @@ app.post("/item/", function(req, res) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
         if (!registerdUser[usr].lists[itemJson.name]){  //if item doesn't exist
-            registerdUser[usr].lists[itemJson.name] = new Object();
-            registerdUser[usr].lists[itemJson.name].color = itemJson.color;
-            registerdUser[usr].lists[itemJson.name].name = itemJson.name;
-            registerdUser[usr].lists[itemJson.name].jobs = [];
-            registerdUser[usr].lists[itemJson.name].shared = false;
-            registerdUser[usr].lists[itemJson.name].owner = usr;
+            registeredUser[usr].lists[itemJson.name] = new Object();
+            registeredUser[usr].lists[itemJson.name].color = itemJson.color;
+            registeredUser[usr].lists[itemJson.name].name = itemJson.name;
+            registeredUser[usr].lists[itemJson.name].jobs = [];
+            registeredUser[usr].lists[itemJson.name].shared = false;
+            registeredUser[usr].lists[itemJson.name].owner = usr;
             res.status(200).send('200');
         }else {
             res.status(404).send('404');
@@ -220,8 +220,8 @@ app.post("/addJob/", function(req, res) {
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
-        if (registerdUser[usr].lists[itemJson.listName]){  //if item doesn't exist
-            registerdUser[usr].lists[itemJson.listName].jobs[registerdUser[usr].lists[itemJson.listName].jobs.length] = itemJson.job;
+        if (registeredUser[usr].lists[itemJson.listName]){  //if item doesn't exist
+            registeredUser[usr].lists[itemJson.listName].jobs[registeredUser[usr].lists[itemJson.listName].jobs.length] = itemJson.job;
             res.status(200).send('200');
         }else {
             res.status(404).send('404');
@@ -239,10 +239,10 @@ app.put("/item/", function(req, res,next){
     if (usr) {
         var curUid = req.cookies.uid;
         res.cookie('uid', curUid, {maxAge: 3600000})
-        if (registerdUser[usr].lists[itemJson.name]){        //if item exist
+        if (registeredUser[usr].lists[itemJson.name]){        //if item exist
             Object.keys(itemJson).forEach(function (key){
                 if(itemJson[key]) {     //if key has value
-                    registerdUser[usr].lists[itemJson.name][key] = itemJson[key];
+                    registeredUser[usr].lists[itemJson.name][key] = itemJson[key];
                 }
             })
         }else {
@@ -335,9 +335,9 @@ function findUser(req) {
 
     var usr = -1;
     if (cuid){
-       Object.keys(registerdUser).forEach(function(user){
+       Object.keys(registeredUser).forEach(function(user){
 
-           if (cuid === registerdUser[user].uid){
+           if (cuid === registeredUser[user].uid){
                usr = user;
            }
        });
