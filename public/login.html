@@ -28,7 +28,7 @@
     <div class="footer">
 
         <button id = "loginBtn" class="button">Login</button></div>
-        not a mamber? please <a href="http://localhost:8080/public/register/">Register</a>
+        not a mamber? please <a href="http://localhost:8080/register/">Register</a>
 
 
 </form>
@@ -40,6 +40,7 @@
     $("#loginBtn").click(function () {
         var password = $("#password").val();
         var username = $("#username").val();
+        console.log(password + " " + username);
         if(password && username) {
             $.post("/login/" + username + "/" + password, function (data) {
                 var status = data;
