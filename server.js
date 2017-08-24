@@ -103,7 +103,7 @@ app.get("/item/", function(req, res){
         res.status(200).sendFile(__dirname + '/public/item.html');
     }else{
         res.status(500);
-        res.sendFile(__dirname + '/public/hello.html');
+        res.sendFile(__dirname + '/public/login.html');
     }
 });
 
@@ -290,7 +290,7 @@ app.delete("/item/deleteUser", function(req, res){
 app.delete("/item/deleteItem", function(req, res){
     console.log(req.body)
     var itemJson= JSON.parse(req.body)
-    var usr = findUser(req)s;
+    var usr = findUser(req);
     if (usr) {
         var curUid = req.cookies.uid;
         var lst = itemJson.listName;
@@ -337,7 +337,7 @@ function findUser(req) {
     if (cuid){
        Object.keys(registerdUser).forEach(function(user){
 
-           if (cuid == registerdUser[user].uid){
+           if (cuid === registerdUser[user].uid){
                usr = user;
            }
        });
